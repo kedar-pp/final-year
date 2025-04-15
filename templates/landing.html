@@ -1,0 +1,11 @@
+<!-- templates/landing.html -->
+{% extends "base.html" %}
+{% block hero %}
+  <section class="hero">
+    <h1>Welcome {{ current_user.username if current_user.is_authenticated else 'Guest' }}!</h1>
+    <p>Reserve your parking slot quickly and efficiently.</p>
+  </section>
+{% endblock %}
+{% block content %}
+  <!-- Optionally, include additional content for logged-in users -->
+{% endblock %}

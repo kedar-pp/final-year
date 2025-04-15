@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+<div class="form-container">
+  <h2>Login</h2>
+  <form method="POST">
+    <input type="text" name="username" placeholder="Username" required />
+    
+    <div class="password-container">
+      <input type="password" name="password" id="password" placeholder="Password" required />
+      <span class="toggle-password" onclick="togglePassword()">
+        <i class="eye-icon fas fa-eye"></i>
+      </span>
+    </div>
+
+    <button type="submit">Login</button>
+  </form>
+  <!-- Register prompt -->
+  <p style="margin-top: 1rem; text-align: center; color: black;">
+    Don't have an account?
+    <a href="{{ url_for('auth.register') }}" style="color: var(--accent-color); text-decoration: underline;">
+      Register here
+    </a>
+  </p>
+</div>
+
+<script>
+  function togglePassword() {
+    var passwordField = document.getElementById("password");
+    var eyeIcon = document.querySelector(".eye-icon");
+    
+    if (passwordField.type === "password") {
+      passwordField.type = "text";
+      eyeIcon.classList.remove("fa-eye");
+      eyeIcon.classList.add("fa-eye-slash");
+    } else {
+      passwordField.type = "password";
+      eyeIcon.classList.remove("fa-eye-slash");
+      eyeIcon.classList.add("fa-eye");
+    }
+  }
+</script>
+{% endblock %}
+

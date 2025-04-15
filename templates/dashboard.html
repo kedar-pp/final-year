@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+<div class="dashboard">
+  <h2>User Dashboard</h2>
+  <h3>Parking Slot Availability</h3>
+  <ul>
+    {% for slot in slots %}
+      {% if slot.status == 'available' %}
+        <li class="available">
+          <span>Slot {{ slot.slot_number }} - Available</span>
+          <button onclick="openReserveForm('{{ slot.id }}')">Reserve Slot</button>
+        </li>
+      {% else %}
+        <li class="booked">
+          <span>Slot {{ slot.slot_number }} - Reserved by User ID: {{ slot.booked_by }}</span>
+
+          <!-- Details Button -->
+          <button onclick="openDetailsModal('{{ slot.id }}')">Details</button>
+
+          <!-- Modal Structure -->
+          <div id="detailsModal-{{ slot.id }}" class="modal">
+            <div class="modal-content">
+              <span class="close" onclick="closeDetailsModal('{{ slot.id }}')">&times;</span>
+              
+              {% set shown = false %}
+              {% for entry in vehicle_entries %}
+                {% if entry.user_id == slot.booked_by %}
+                  {% set shown = true %}
+
+                  {% if current_user.username == 'admin' %}
+                    <h3>Owner Details</h3>
+                    <p><strong>Owner Name:</strong> {{ entry.owner_name }}</p>
+                    <p><strong>Contact:</strong> {{ entry.owner_contact }}</p>
+                    <p><strong>Time Remaining:</strong> {{ entry.exit_time - now }}</p>
+                  {% else %}
+                    <h3>Booking Info</h3>
+                    <p><strong>Booked At:</strong> {{ entry.entry_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p><strong>Duration:</strong> {{ entry.duration }} hour(s)</p>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- 🚀 Show Release Slot button only for admins -->
+          {% if current_user.id == slot.booked_by or current_user.username == 'admin' %}
+            <form method="POST" action="{{ url_for('booking.release_slot', slot_id=slot.id) }}">
+               <button type="submit">Release Slot</button>
+            </form>
+          {% endif %}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- 🚀 Modal Reservation Form (For All Users) -->
+<div id="reserveModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeReserveForm()">&times;</span>
+    <h3>Reserve Parking Slot</h3>
+    <form id="reserveForm" method="POST">
+      <input type="text" name="owner_name" placeholder="Owner Name" required>
+      <input type="text" name="registration_number" placeholder="Registration Number" required>
+      <input type="text" name="owner_contact" placeholder="Owner Contact" required>
+      <input type="number" name="duration" placeholder="Duration (hours)" required>
+      <label for="vehicle_category">Vehicle Type:</label>
+      <select id="vehicle_category" name="vehicle_category" required>
+        <option value="2-wheeler">2-Wheeler</option>
+        <option value="3-wheeler">3-Wheeler</option>
+        <option value="4-wheeler">4-Wheeler</option>
+      </select>
+      <button type="submit">Confirm Reservation</button>
+    </form>
+  </div>
+</div>
+
+<!-- 🚀 JavaScript for Popup -->
+<script>
+  // 🚗 Open Reservation Modal
+  function openReserveForm(slotId) {
+    slotId = parseInt(slotId);
+    const modal = document.getElementById("reserveModal");
+    const form = document.getElementById("reserveForm");
+
+    form.action = "/booking/book_slot/" + slotId;
+    modal.style.display = "flex";
+  }
+
+  // ❌ Close Reservation Modal
+  function closeReserveForm() {
+    document.getElementById("reserveModal").style.display = "none";
+  }
+
+  // 📋 Open Details Modal
+  function openDetailsModal(slotId) {
+    document.getElementById('detailsModal-' + slotId).style.display = 'flex';
+  }
+
+  // ❌ Close Details Modal
+  function closeDetailsModal(slotId) {
+    document.getElementById('detailsModal-' + slotId).style.display = 'none';
+  }
+
+  // 🔄 Optional: Reload only on first dashboard load to fetch updated slot data
+  if (window.location.pathname === '/dashboard' && !sessionStorage.getItem("page_loaded")) {
+    sessionStorage.setItem("page_loaded", "true");
+    location.reload();
+  }
+
+  // 📦 Unified Outside Click Handler for All Modals
+  window.onclick = function(event) {
+    // Close reserve modal
+    const reserveModal = document.getElementById("reserveModal");
+    if (event.target === reserveModal) {
+      reserveModal.style.display = "none";
+    }
+
+    // Close any open detail modals
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  };
+</script>
+{% endblock %}

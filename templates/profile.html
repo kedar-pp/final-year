@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="profile">
+  <h2>Your Profile</h2>
+  <p><strong>Username:</strong> {{ current_user.username }}</p>
+
+  <h3>Your Parking Reservation</h3>
+  {% if current_user.vehicle %}
+  <p><strong>Slot Number:</strong> {{ current_user.vehicle.parking_slot.slot_number }}</p>
+  <p><strong>Vehicle:</strong> {{ current_user.vehicle.vehicle_category }}</p>
+  <p><strong>Registration No:</strong> {{ current_user.vehicle.registration_number }}</p>
+  <p><strong>Owner Name:</strong> {{ current_user.vehicle.owner_name }}</p>
+  <p><strong>Mobile:</strong> {{ current_user.vehicle.owner_contact }}</p>
+  <p><strong>In Time:</strong> {{ current_user.vehicle.entry_time }}</p>
+  <p><strong>Duration:</strong> {{ current_user.vehicle.duration }} hours</p>
+  {% else %}
+  <p>You have no reservations.</p>
+  {% endif %}
+</div>
+{% endblock %}

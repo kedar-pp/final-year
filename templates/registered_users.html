@@ -1,0 +1,23 @@
+<!-- templates/registered_users.html -->
+{% extends "admin_base.html" %}
+{% block admin_content %}
+<div class="registered-users">
+  <h2>Registered Users</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+<!-- templates/admin_base.html -->
+{% extends "base.html" %}
+{% block nav_extra %}
+  <!-- <li><a href="{{ url_for('admin.admin_dashboard') }}">Slots</a></li> -->
+  <!-- <li><a href="{{ url_for('admin.registered_users') }}">Registered Users</a></li> -->
+{% endblock %}
+{% block content %}
+  {% block admin_content %}{% endblock %}
+{% endblock %}

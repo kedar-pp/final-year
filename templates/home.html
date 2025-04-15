@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% block hero %}
+<section class="hero animated-hero">
+  <div class="hero-content">
+    <h1>Welcome to Parking Management</h1>
+    <p>Find the best parking solutions effortlessly.</p>
+    <a href="{{ url_for('auth.login') }}" class="btn">Get Started</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

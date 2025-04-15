@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parking Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+
+</head>
+<body>
+  <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                    <button class="flash-close" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo">Vehicle Parking System </div>
+
+        <!-- Toggle Button -->
+        <button id="menu-toggle" class="menu-toggle">&#9776;</button>
+
+        <ul id="nav-links">
+          {% if not current_user.is_authenticated %}
+            <!-- Public Navigation for visitors -->
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+          {% else %}
+        
+          <!-- Navigation after login -->
+          <li><a href="{{ url_for('landing') }}">Home</a></li>
+          <!-- Only show Reserve Slot and Profile for non-admin users -->
+          {% endif %}
+
+          {% if current_user.is_authenticated and current_user.username != 'admin' %}
+              <li><a href="{{ url_for('reserve') }}">Reserve Slot</a></li>
+              <li><a href="{{ url_for('profile') }}">Profile</a></li>
+          {% endif %}
+        
+          {% if current_user.is_authenticated and current_user.username == 'admin' %}
+            <li><a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a></li>
+            <li><a href="{{ url_for('admin.registered_users') }}">Registered Users</a></li>
+          {% endif %}
+        
+          {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            <!-- <li><a href="{{ url_for('auth.register') }}">Register</a></li> -->
+          {% endif %}
+          <!-- Block for extra nav items (used by admin layout) -->
+          {% block nav_extra %}{% endblock %}
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  {% block hero %}{% endblock %}
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+  {% if request.endpoint in ['home', 'landing','about','services','team','contact'] %}
+  <footer class="footer">
+    <div class="waves">
+      <div class="wave" id="wave1"></div>
+      <div class="wave" id="wave2"></div>
+      <div class="wave" id="wave3"></div>
+      <div class="wave" id="wave4"></div>
+    </div>
+    <ul class="social-icon">
+      <li class="social-icon__item"><a class="social-icon__link" href="https://www.facebook.com/">
+          <ion-icon name="logo-facebook"></ion-icon>
+        </a></li>
+      <li class="social-icon__item"><a class="social-icon__link" href="https://www.x.com/">
+          <ion-icon name="logo-twitter"></ion-icon>
+        </a></li>
+      <li class="social-icon__item"><a class="social-icon__link" href="https://www.linkedln.com/">
+          <ion-icon name="logo-linkedin"></ion-icon>
+        </a></li>
+      <li class="social-icon__item"><a class="social-icon__link" href="https://www.instagram.com/">
+          <ion-icon name="logo-instagram"></ion-icon>
+        </a></li>
+    </ul>
+    <ul class="menu">
+      <li class="menu__item"><a class="menu__link" href="{{ url_for('about') }}">About</a></li>
+      <li class="menu__item"><a class="menu__link" href="{{ url_for('services') }}">Services</a></li>
+      <li class="menu__item"><a class="menu__link" href="{{ url_for('team') }}">Team</a></li>
+      <li class="menu__item"><a class="menu__link" href="{{ url_for('contact') }}">Contact</a></li>
+    </ul>
+    <p class="footer-copy">&copy;2025 Parking Management. All Rights Reserved</p>
+    <!-- Ionicons Scripts -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  </footer>
+  {% endif %}
+
+  <script>
+    setTimeout(function() {
+      let alerts = document.querySelectorAll(".alert");
+      alerts.forEach(alert => {
+        alert.style.opacity = "0";
+        setTimeout(() => alert.remove(), 500);
+      });
+    }, 3000);  // Messages disappear after 3 seconds
+
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+      document.getElementById('nav-links').classList.toggle('active');
+    });
+  </script>
+
+</body>
+</html>
